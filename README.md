@@ -45,7 +45,7 @@ To display the amount of unique countries the customers are from we first need t
 
 ### Final query:
 
-MATCH (c:Customer) RETURN COUNT(DISTINCT c.Country)
+    MATCH (c:Customer) RETURN COUNT(DISTINCT c.Country)
 
 [![Image from Gyazo](https://i.gyazo.com/063b7c8979c46212ca8ebba30bf50764.png)](https://gyazo.com/063b7c8979c46212ca8ebba30bf50764)
 
@@ -69,7 +69,7 @@ To get the number of different products we first need to match to all the produc
 
 ### Final query:
 
-MATCH (p:Product) RETURN COUNT(DISTINCT p.StockCode)
+    MATCH (p:Product) RETURN COUNT(DISTINCT p.StockCode)
 
 
 
@@ -85,7 +85,7 @@ To get the most expensive product in the database we first need to match to all 
 
 ### Final query:
 
-MATCH (o:Order)-[c:CONTAINS]->(p:Product) RETURN c.UnitPrice,p.StockCode  ORDER BY c.UnitPrice DESC LIMIT 1
+    MATCH (o:Order)-[c:CONTAINS]->(p:Product) RETURN c.UnitPrice,p.StockCode  ORDER BY c.UnitPrice DESC LIMIT 1
 
 ## 4.
 
@@ -99,13 +99,13 @@ First we need to get all the order and product nodes in the database along with 
 
 ### Final query:
 
-MATCH (o:Order)-[con:CONTAINS]->(p:Product)
-
-WITH con.Quantity * con.UnitPrice AS cost, split(o.InvoiceDate,'-') AS month
-
-RETURN month[1], sum(cost) AS totalamount
-
-ORDER BY totalamount DESC LIMIT 1
+    MATCH (o:Order)-[con:CONTAINS]->(p:Product)
+    
+    WITH con.Quantity * con.UnitPrice AS cost, split(o.InvoiceDate,'-') AS month
+    
+    RETURN month[1], sum(cost) AS totalamount
+    
+    ORDER BY totalamount DESC LIMIT 1
 
 
 ## 5.
@@ -120,13 +120,13 @@ For this question we need to get the most popular product this is defined in the
 
 ### Final query:
 
-MATCH(c:Customer)-[ord:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
-
-WITH DISTINCT COUNT(DISTINCT c.CustomerID) AS amount, p.StockCode AS stockcode
-
-RETURN stockcode,amount
-
-ORDER BY amount DESC LIMIT 1
+    MATCH(c:Customer)-[ord:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
+    
+    WITH DISTINCT COUNT(DISTINCT c.CustomerID) AS amount, p.StockCode AS stockcode
+    
+    RETURN stockcode,amount
+    
+    ORDER BY amount DESC LIMIT 1
 
 
 
@@ -143,17 +143,17 @@ For this question we first need to find the most popular product which is the sa
 
 ### Final query:
 
-MATCH(c:Customer)-[ord:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
-
-WITH DISTINCT COUNT(DISTINCT c.CustomerID) AS amount, p.StockCode AS stockcode ORDER BY amount DESC LIMIT 1
-
-MATCH(:Product{StockCode: stockcode})<-[:CONTAINS]-(ord:Order)
-
-WITH ord.InvoiceNo AS invoicenum
-
-MATCH (o:Order{InvoiceNo: invoicenum})-[:CONTAINS]->(p:Product)
-
-RETURN DISTINCT p
+    MATCH(c:Customer)-[ord:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
+    
+    WITH DISTINCT COUNT(DISTINCT c.CustomerID) AS amount, p.StockCode AS stockcode ORDER BY amount DESC LIMIT 1
+    
+    MATCH(:Product{StockCode: stockcode})<-[:CONTAINS]-(ord:Order)
+    
+    WITH ord.InvoiceNo AS invoicenum
+    
+    MATCH (o:Order{InvoiceNo: invoicenum})-[:CONTAINS]->(p:Product)
+    
+    RETURN DISTINCT p
 
 
 ## 7.
@@ -168,11 +168,11 @@ To get the customer who spent the most money first we need to get all unique cus
 
 ### Final query:
 
-MATCH (c:Customer)-[:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
-
-RETURN DISTINCT c.CustomerID, sum(con.Quantity * con.UnitPrice) AS total ORDER BY total DESC
-
-LIMIT 1
+    MATCH (c:Customer)-[:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
+    
+    RETURN DISTINCT c.CustomerID, sum(con.Quantity * con.UnitPrice) AS total ORDER BY total DESC
+    
+    LIMIT 1
 
 
 ## 8.
@@ -187,17 +187,17 @@ To get the custromers that increased their spending in each order they placed we
 
 ### Final query:
 
-MATCH (c:Customer)-[:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
-
-WITH DISTINCT c.CustomerID AS Customer, o AS ord, SUM(con.Quantity * con.UnitPrice) AS sumover
-
-ORDER BY ord.InvoiceNo ASC
-
-WITH collect(sumover) AS list, Customer AS customers
-
-WHERE all(i in range(0, size(list) - 2) WHERE list[i] < list[i + 1]) AND size(list) > 1
-
-RETURN customers
+    MATCH (c:Customer)-[:ORDERD]->(o:Order)-[con:CONTAINS]->(p:Product)
+    
+    WITH DISTINCT c.CustomerID AS Customer, o AS ord, SUM(con.Quantity * con.UnitPrice) AS sumover
+    
+    ORDER BY ord.InvoiceNo ASC
+    
+    WITH collect(sumover) AS list, Customer AS customers
+    
+    WHERE all(i in range(0, size(list) - 2) WHERE list[i] < list[i + 1]) AND size(list) > 1
+    
+    RETURN customers
 
 
 
