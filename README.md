@@ -7,7 +7,7 @@
 - Database Query's
 
 ## Data Set
-
+https://github.com/HarryCS98/Neo4J-E-commerce-Project/blob/main/e-commerce-2021.csv
 
 
 
